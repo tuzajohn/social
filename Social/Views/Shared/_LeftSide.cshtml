@@ -1,0 +1,156 @@
+﻿<!-- LEFT -->
+<div class="col-lg-3 col-md-12 col-sm-12">
+
+    <!-- QUICK LINKS -->
+    <div class="side-nav margin-bottom-60">
+
+        <div class="side-nav-head">
+            <button class="fa fa-bars"></button>
+            <h4>QUICK LINKS</h4>
+        </div>
+
+        <ul class="list-group list-group-bordered list-group-noicon uppercase">
+            <li class="list-group-item active"><a href="~/home/post"><span class="size-11 text-muted pull-right" id="art_span_count">(0)</span> My Posts</a></li>
+            <li class="list-group-item"><a href="~/home/network"><span class="size-11 text-muted pull-right" id="net_span_count">(0)</span> My Network</a></li>
+            <li class="list-group-item"><a href="#"><span class="size-11 text-muted pull-right" id="req_span_count">(0)</span> My Request(s)</a></li>
+            <li class="list-group-item"><a href="~/chat"><span class="size-11 text-muted pull-right" id="message_span_count">(0)</span> Messages</a></li>
+
+        </ul>
+
+    </div>
+    <!-- /QUICK LINKS -->
+    <!-- TAGS -->
+    <div class="side-nav margin-bottom-60">
+
+        <div class="side-nav-head">
+            <button class="fa fa-bars"></button>
+            <h4>TAGS</h4>
+        </div>
+
+        <ul class="list-group list-unstyled">
+            <li class="list-group-item"><a href="#"><span class="size-11 text-muted pull-right">(21)</span> Life Style</a></li>
+            <li class="list-group-item"><a href="#"><span class="size-11 text-muted pull-right">(44)</span> Nature</a></li>
+            <li class="list-group-item"><a href="#"><span class="size-11 text-muted pull-right">(2)</span> Social</a></li>
+        </ul>
+
+    </div>
+    <div class="side-nav margin-bottom-60">
+
+        <div class="side-nav-head">
+            <button class="fa fa-bars"></button>
+            <h4>Speak Up</h4>
+        </div>
+
+        <!-- input -->
+        <div class="fancy-form">
+            <i class="fa fa-microphone"></i>
+
+            <input type="text" id="speak" class="form-control" placeholder="What is on your mind?">
+
+            <span class="fancy-tooltip top-left">
+                <em>What is on your mind?</em>
+            </span>
+        </div>
+
+
+        <br />
+
+        <div id="speak_msg"></div>
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        function count_netowrk() {
+            $.ajax({
+                url: '@Url.Action("CountNetwork", "Home")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    $('#net_span_count').html("(" + result.count + ")");
+                },
+                error: function (r) {
+                    $('#net_span_count').html("(0)");
+                }
+            });
+        }
+
+        function count_message() {
+            $.ajax({
+                url: '@Url.Action("CountAllMessages", "Chat")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    $('#message_span_count').html("(" + result.count + ")");
+                    $('.message_span_count').html(result.count);
+                },
+                error: function (r) {
+                    $('#message_span_count').html("(0)");
+                    $('message_span_count').html("0");
+                }
+            });
+        }
+        function count_post() {
+            $.ajax({
+                url: '@Url.Action("CountPost", "Home")',
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    $('#art_span_count').html("(" + result.count + ")");
+                },
+                error: function (r) {
+                    $('#art_span_count').html("(0)");
+                }
+            });
+        }
+
+        function runAll() {
+            count_netowrk();
+            count_post();
+            count_message();
+            //notifications();
+        }
+        runAll();
+        //setInterval(runAll(), 5000);
+        setInterval(function () {
+            runAll();
+        }, 1000);
+
+        $('#speak').keyup(function (e) {
+            if (e.keyCode == 13) {
+                $('#speak_msg').html($(this).val());
+            }
+        });
+        notifications();
+        function notifications() {
+            fetch('@Url.Action("Notifications", "Chat")',
+                {
+                    method: 'post'
+                })
+                .then((res) => { return res.json() })
+                .then((data) => {
+                    console.log(data);
+                    if (data.check == false) {
+                        let list = data.el;
+                        list.forEach((el) => {
+                            $('.notification').append(el);
+                        });
+                    }
+                    else {
+                        let r = `
+                        <a class="text-center" href="chat">
+                            <h6>NOTHING TO VIEW</h6>
+                        </a>`;
+                        $('.notification').html(r);
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+        }
+    });
+</script>

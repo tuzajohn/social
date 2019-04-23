@@ -1,0 +1,212 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+<!-- CENTER -->
+<div class="col-lg-6 col-md-6 col-sm-12">
+
+    <form class=" margin-bottom-30 radius-4" method="post" action="@Url.Action("SavePost", "Home")">
+        <fieldset>
+            <div class="fancy-form">
+                <textarea rows="5" id="_post" name="post" class="form-control word-count" data-maxlength="200" data-info="textarea-words-info" placeholder="My mind..."></textarea>
+
+                <i class="fa fa-comments"><!-- icon --></i>
+
+                <span class="fancy-hint size-11 text-muted">
+                    <strong>Hint:</strong> 200 words allowed!
+                    <span class="pull-right">
+                        <span id="textarea-words-info">0/200</span> Words
+                    </span>
+                </span>
+
+            </div>
+            <button type="submit" class="btn btn-featured btn-success btn-inverse post">
+                <span>SAVE POST</span>
+                <i class="glyphicon glyphicon-send"></i>
+            </button>
+        </fieldset>
+    </form>
+
+    <div id="posts">
+
+
+    </div>
+
+
+</div>
+
+@Html.Partial("_RightSide")
+
+<script>
+    var pageIndex = 0;
+    $(document).ready(function () {
+        init();
+        $(window).scroll(function () {
+            //$(window).scrollTop() + $(window).height() == $(document).height()
+            if($(window).scrollTop() == $(document).height() - $(window).height()) {
+                init();
+            }
+        });
+        $('.post_').click(function () {
+            var _post = $('#_post').val();
+            run_waitMe($('body'), 1, "win8");
+            $.ajax({
+                url: '@Url.Action("SavePost", "Home")',
+                contentType: "application/json; charset=utf-8",
+                data: "{post:" + _post + "}",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    if (result.check == true) {
+                        location.href = '@Request.Url.AbsoluteUri';
+                    } else {
+                        $('.msg').html(result.message);
+                    }
+                    $('body').waitMe('hide');
+                },
+                error: function (r) {
+                    //alert(r.responseText);
+                    $('body').waitMe('hide');
+                }
+            });
+        });
+        $('#posts').empty();
+        function init() {
+            run_waitMe($('body'), 1, "win8");
+            $.ajax({
+                url: '@Url.Action("LoadPosts", "Home")',
+                contentType: "application/json; charset=utf-8",
+                data: "{page:" + pageIndex + ", count:2}",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    if (Object.keys(result.element).length != 0) {
+                        $.each(result.element, function (index, value) {
+                            $('#posts').append(value);
+                        });
+                        pageIndex++;
+                    }
+                    $('body').waitMe('hide');
+                },
+                error: function (r) {
+                    //alert(r.responseText);
+                    $('body').waitMe('hide');
+                }
+            });
+        }
+
+
+
+
+    });
+
+    $(document).on('keyup', '.comment', function (e) {
+
+        if (e.which == 13) {
+            //alert($(this).attr('id'));
+            var dynamic_id = $(this).attr('id');
+            var newId = dynamic_id.substring(dynamic_id.indexOf('_') + 1);
+            //alert(newId);
+            var comment_count_id = 'comment_counter_' + newId;
+            //alert(comment_count_id);
+            //alert(document.getElementById(comment_count_id).innerHTML);
+
+            var data = document.getElementById('commentbox_' + newId).value;
+            SendComments(newId, data);
+            document.getElementById('commentbox_' + newId).value = "";
+        }
+
+
+        function SendComments(e, d)
+        {
+            console.log(e);
+            console.log(d);
+            var post = {}; post.Id = e; post.Data = d;
+            @*fetch('@Url.Action("SavePostComment", "Home")', {
+                method: 'post',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(post)
+            }).then(function (data) {
+                    alert(JSON.stringify(data))
+                Console.log(data);
+            }).catch(function (err) {
+                console.log(err)
+            })*@
+            $.ajax({
+                url: '@Url.Action("SavePostComment", "Home")',
+                method: 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: JSON.stringify(post),
+                success: function (data) {
+                    if (data.check == true) {
+                        var comment_count_id = 'comment_counter_' + e;
+                        document.getElementById(comment_count_id).innerHTML = data.count;
+                        LoadLatest(e);
+                    }
+                },
+                error: function (data) {
+                    
+                }
+            })
+        }
+        function LoadLatest(e) {
+            var d = 'comment_box_' + e;
+            $.ajax({
+                url: '@Url.Action("LoadLatest", "Home")',
+                method: 'post',
+                contentType: 'application/json; charset=utf-8',
+                dataType: 'json',
+                data: "{id:" + JSON.stringify(e) + "}",
+                success: function (data) {
+                    console.log(data);
+                    if (data.check == true) {
+                        var mydiv = document.getElementById(d);
+                        var newcontent = document.createElement('div');
+                        newcontent.innerHTML = data.el;
+                        while (newcontent.firstChild) {
+                            mydiv.appendChild(newcontent.firstChild);
+                        }
+                        //document.getElementById(d).append = data.count;
+                    }
+                },
+                error: function (data) {
+                    console.log(data.responseText);
+                }
+            })
+        }
+});
+    function run_waitMe(el, num, effect) {
+        text = 'Please wait...';
+        fontSize = '';
+        switch (num) {
+            case 1:
+                maxSize = '';
+                textPos = 'vertical';
+                break;
+            case 2:
+                text = '';
+                maxSize = 30;
+                textPos = 'vertical';
+                break;
+            case 3:
+                maxSize = 30;
+                textPos = 'horizontal';
+                fontSize = '18px';
+                break;
+        }
+        console.log(effect)
+        el.waitMe({
+            effect: effect,
+            text: text,
+            bg: 'rgba(255,255,255,0.7)',
+            color: '#000',
+            maxSize: maxSize,
+            source: 'img.svg',
+            textPos: textPos,
+            fontSize: fontSize,
+            onClose: function () { }
+        });
+    }
+</script>

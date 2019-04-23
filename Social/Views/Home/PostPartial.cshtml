@@ -1,0 +1,123 @@
+﻿@model Social.Helpers.Message
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="col-md-9">
+    @{ 
+        if (Model != null)
+        {
+            @Model._Message
+        }
+    }
+
+
+    <div class="panel panel-success">
+        <div class="panel-body">
+
+            <form class="validate" action="@Url.Action("PostData", "Home")" method="post" enctype="multipart/form-data" data-success="Sent! Thank you!" data-toastr-position="top-right">
+                <fieldset>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <label>Heading</label>
+                                <input type="text" name="heading" value="" class="form-control required">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <label>Category *</label>
+                                <select name="category" class="form-control pointer required">
+                                    <option value="">--- Select ---</option>
+                                    <option value="nature">Nature</option>
+                                    <option value="life style">Life Style</option>
+                                    <option value="social">Social</option>
+                                    <option value="politics">Politics</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12 col-sm-12">
+                                <label>Body</label>
+                                <textarea name="body" rows="4" class="form-control required"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <div class="col-md-12">
+                                <label>
+                                    File Attachment
+                                    <small class="text-muted">Image</small>
+                                </label>
+
+                                <!-- custom file upload -->
+                                <input class="custom-file-upload" name="file" type="file" id="file" data-btn-text="Select a File" />
+                                <small class="text-muted block">Max file size: 10Mb (zip/pdf/jpg/png)</small>
+
+                            </div>
+                        </div>
+                    </div>
+
+                </fieldset>
+
+                <div class="row">
+                    <div class="col-md-3">
+                        <button type="submit" id="send_btn" class="btn btn-3d btn-primary btn-block margin-top-10">
+                            Save Post
+                        </button>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+<div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <!-- Modal Body -->
+            <div class="modal-body">
+                <img id="image" src="#" class="img-responsive"/>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        function readURL(input) {
+                if (input.files && input.files[0]) {
+                    var reader = new FileReader();
+                    reader.onload = function (e) {
+                        $('#image').attr('src', e.target.result);
+                    }
+                    reader.readAsDataURL(input.files[0]);
+                }
+        }
+        $("#file").change(function () {
+            readURL(this);
+            $('#myModal').modal('show');
+        });
+
+
+
+    });
+</script>

@@ -1,0 +1,6 @@
+﻿<a href='#'>
+    <!-- cart item -->
+    <img src='~/assets/images/demo/people/300x300/4-min.jpg' alt='' width='45' height='45'>
+    <h6><span>2x</span> RED BAG WITH HUGE POCKETS</h6>
+    <small>$37.21</small>
+</a><!-- /cart item -->

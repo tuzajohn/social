@@ -1,0 +1,199 @@
+﻿
+<!DOCTYPE html>
+<!--[if IE 8]>			<html class="ie ie8"> <![endif]-->
+<!--[if IE 9]>			<html class="ie ie9"> <![endif]-->
+<!--[if gt IE 9]><!-->
+<html>
+ <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <title>Yeauplato</title>
+    <meta name="keywords" content="social media, connecting, connected, friends" />
+    <meta name="description" content="" />
+    <meta name="Author" content="yeauplato" />
+
+    <!-- mobile settings -->
+    <meta name="viewport" content="width=device-width, maximum-scale=1, initial-scale=1, user-scalable=0" />
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1'><![endif]-->
+    <!-- WEB FONTS : use %7C instead of | (pipe) -->
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400%7CRaleway:300,400,500,600,700%7CLato:300,400,400italic,600,700" rel="stylesheet" type="text/css" />
+
+    <!-- CORE CSS -->
+    <link href="~/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+
+    <!-- THEME CSS -->
+    <link href="~/assets/css/essentials.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/layout.css" rel="stylesheet" type="text/css" />
+
+    <!-- PAGE LEVEL SCRIPTS -->
+    <link href="~/assets/css/header-1.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/layout-shop.css" rel="stylesheet" type="text/css" />
+    <link href="~/assets/css/color_scheme/darkgreen.css" rel="stylesheet" type="text/css" id="color_scheme" />
+    <link href="~/assets/css/waitMe.min.css" rel="stylesheet" />
+    <script type="text/javascript" src="~/assets/plugins/jquery/jquery-2.2.3.min.js"></script>
+
+    <style>
+        .picture_main {
+          width: 100px;
+          margin: 0 auto;
+          overflow: hidden;
+          position: relative;
+          height: 100px;
+        }
+
+        img.absolute {
+          left: 0%;
+          margin-left: -100px;
+          position: absolute;
+        }
+
+        .picture_box {
+          width: 100%;
+          margin: 0 auto;
+          overflow: hidden;
+          position: relative;
+          height: 30vh;
+        }
+        .zero_margin{
+            margin:0px !important;
+        }
+    </style>
+</head>
+
+<body class="smoothscroll enable-animation">
+
+
+    <!-- wrapper -->
+    <div id="wrapper">
+
+        @Html.Partial("_TopBar")
+
+        <div id="header" class="sticky clearfix">
+
+            <!-- SEARCH HEADER -->
+            <div class="search-box over-header">
+                <a id="closeSearch" href="#" class="glyphicon glyphicon-remove"></a>
+
+                <form action="page-search-result-1.html" method="get">
+                    <input type="text" class="form-control" placeholder="SEARCH" />
+                </form>
+            </div>
+            <!-- /SEARCH HEADER -->
+            <!-- TOP NAV -->
+            <header id="topNav">
+                <div class="container">
+
+                    <!-- Mobile Menu Button -->
+                    <button class="btn btn-mobile" data-toggle="collapse" data-target=".nav-main-collapse">
+                        <i class="fa fa-bars"></i>
+                    </button>
+                    <!-- BUTTONS -->
+                    <ul class="pull-right nav nav-pills nav-second-main">
+
+                        <!-- SEARCH -->
+                        <li class="search">
+                            <a href="javascript:;">
+                                <i class="fa fa-search"></i>
+                            </a>
+                        </li>
+                        <li class="quick-cart">
+                            <a href="#">
+                                <span class="badge badge-aqua btn-xs badge-corner message_span_count">0</span>
+                                <i class="fa fa-envelope"></i>
+                            </a>
+                            <div class="quick-cart-box" style="display: none;">
+                                <h4>notification</h4>
+
+                                <div class="quick-cart-wrapper notification">
+
+                                </div>
+
+                                <!-- quick cart footer -->
+                                <div class="quick-cart-footer clearfix">
+                                    <a href="~/chat" class="btn btn-primary btn-xs pull-right">VIEW ALL</a>
+                                </div>
+                                <!-- /quick cart footer -->
+
+                            </div>
+                        </li>
+                        <!-- /SEARCH -->
+                    </ul>
+                    <!-- /BUTTONS -->
+                    <!-- Logo -->
+                    <a class="logo pull-left" href="~/home">
+                        <img src="~/assets/resources/logo.jpg" alt="yeauplato" />
+                    </a>
+
+                    <div class="navbar-collapse pull-right nav-main-collapse collapse submenu-dark">
+                        <nav class="nav-main">
+                            <ul id="topMain" class="nav nav-pills nav-main">
+                                <li>
+                                    <a href="~/home">HOME</a>
+                                </li>
+                                <li>
+                                    <a href="~/home/timeline">TIMELINE</a>
+                                </li>
+                                <li>
+                                    <a href="~/home/timeline">PROFILE</a>
+                                </li>
+                            </ul>
+
+                        </nav>
+                    </div>
+
+                </div>
+            </header>
+            <!-- /Top Nav -->
+
+        </div>
+
+        <!-- /PAGE HEADER -->
+        <!-- -->
+        <section>
+            <div class="container">
+
+                <div class="row">
+
+
+                    @Html.Partial("_LeftSide")
+
+                    @RenderBody()
+
+
+
+
+                </div>
+
+            </div>
+        </section>
+        <!-- / -->
+
+    </div>
+    <!-- /wrapper -->
+    <!-- SCROLL TO TOP -->
+    <a href="#" id="toTop"></a>
+
+
+    <!-- PRELOADER -->
+    <div id="preloader">
+        <div class="inner">
+            <span class="loader"></span>
+        </div>
+    </div><!-- /PRELOADER -->
+    <!-- JAVASCRIPT FILES -->
+    @{ 
+        var url = Request.Url.AbsoluteUri;
+        if (url.Substring(url.IndexOf("//") + 2).Split('/')[1].Length > 0)
+        {
+            url = url.Replace(Request.Url.AbsolutePath, "");
+        }
+        else { url.Remove(url.LastIndexOf('/')); }
+    }
+    <script type="text/javascript">var plugin_path = '@url/assets/plugins/';</script>
+
+    <script type="text/javascript" src="~/assets/js/scripts.js"></script>
+    <script type="text/javascript" src="~/assets/plugins/smoothscroll.js"></script>
+    <!-- PAGE LEVEL SCRIPTS -->
+    <script src="~/assets/js/waitMe.min.js"></script>
+</body>
+</html>

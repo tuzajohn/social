@@ -1,0 +1,171 @@
+﻿@using Social.Models;
+@{
+    ViewBag.Title = "Chat";
+    Layout = "~/Views/Chat/_ChatLayout.cshtml";
+    if (Session[""] is null)
+    {
+
+    }
+    var _user = (ViewBag.User == null ? new Social.Models.User() : (User)ViewBag.User);
+
+}
+
+<div class="panel panel-success">
+    <div class="panel-body">
+        <div class="box-inner" style="height:100%;">
+            <h3>
+                @{
+                    if (_user.Email is null)
+                    {
+                        <span>All</span>
+                    }
+                    else
+                    {
+                        <a class="pull-right size-11 text-warning" href="#">Read All</a>
+                        @_user.FirstName @_user.OtherNames
+                    }
+                }
+            </h3>
+            <div class="slimscroll _mobile n" style="height:75vh;" data-always-visible="true" data-size="10px" data-position="right" data-opacity="0.4" disable-body-scroll="true" start="bottom">
+
+                
+            </div>
+        </div>
+
+        <div class="box-footer">
+            <!-- INLINE SEARCH -->
+            <div class="inline-search clearfix">
+                <div class="input-group">
+                    <input type="text" id="content" name="content" class="form-control required" placeholder="Your mesage...">
+                    <span class="input-group-btn">
+                        <button class="btn btn-success" id="send" type="button"><i class="glyphicon glyphicon-send"></i></button>
+                    </span>
+                </div>
+            </div>
+            <!-- /INLINE SEARCH -->
+
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        get();
+        $('#send').click(function () {
+            send();
+        });
+        $('#content').keypress(function(event){
+            var keycode = (event.keyCode ? event.keyCode : event.which);
+            if(keycode == '13'){
+                send();
+            }
+        });
+        function send() {
+            var model = {};
+            var val = getParams(window.location.href);
+            model.Id = val.id;
+            model.Content = $('#content').val();
+            run_waitMe($('body'), 1, "win8");
+            fetch('@Url.Action("SendMessage", "Chat")',
+                {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json;charset=utf8;' },
+                    body: "{model:" + JSON.stringify(model) + "}"
+                })
+                .then((res) => { return res.json() })
+                .then((data) => {
+                    console.log(data);
+                    $('#content').val("");
+                    if (data.check == true) {
+                        $('.n').append(data.el);
+                    }
+                    else {
+                        console.log(data.message);
+                    }
+                    $('body').waitMe('hide');
+                })
+                .catch((err) => {
+                    console.log(err);
+                    $('body').waitMe('hide');
+                });
+        }
+        function get() {
+                        var model = {};
+            var val = getParams(window.location.href);
+            model.Id = val.id;
+            run_waitMe($('body'), 1, "win8");
+            fetch('@Url.Action("LoadMessages", "Chat")',
+                {
+                    method: 'post',
+                    headers: { 'Content-Type': 'application/json;charset=utf8;' },
+                    body: "{model:" + JSON.stringify(model) + "}"
+                })
+                .then((res) => { return res.json() })
+                .then((data) => {
+                    console.log(data);
+                    $('#content').val("");
+                    if (data.check == true) {
+                        let list = data.el;
+                        list.forEach((el) => {
+                            $('.n').append(el);
+                        });
+                    }
+                    else {
+                        console.log(data.message);
+                    }
+                    $('body').waitMe('hide');
+                })
+                .catch((err) => {
+                    console.log(err);
+                    $('body').waitMe('hide');
+                });
+        }
+    });
+
+    var getParams = function (url) {
+	    var params = {};
+	    var parser = document.createElement('a');
+	    parser.href = url;
+	    var query = parser.search.substring(1);
+	    var vars = query.split('&');
+	    for (var i = 0; i < vars.length; i++) {
+		    var pair = vars[i].split('=');
+		    params[pair[0]] = decodeURIComponent(pair[1]);
+	    }
+	    return params;
+    };
+    function run_waitMe(el, num, effect) {
+        text = 'Please wait...';
+        fontSize = '';
+        switch (num) {
+            case 1:
+                maxSize = '';
+                textPos = 'vertical';
+                break;
+            case 2:
+                text = '';
+                maxSize = 30;
+                textPos = 'vertical';
+                break;
+            case 3:
+                maxSize = 30;
+                textPos = 'horizontal';
+                fontSize = '18px';
+                break;
+        }
+        console.log(effect)
+        el.waitMe({
+            effect: effect,
+            text: text,
+            bg: 'rgba(255,255,255,0.7)',
+            color: '#000',
+            maxSize: maxSize,
+            source: 'img.svg',
+            textPos: textPos,
+            fontSize: fontSize,
+            onClose: function () { }
+        });
+    }
+
+</script>

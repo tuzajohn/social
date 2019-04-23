@@ -1,0 +1,180 @@
+﻿@model Social.Helpers.Register
+@{
+    ViewBag.Title = "Register";
+    Layout = "~/Views/Shared/_AccountLayout.cshtml";
+
+}
+
+<div class="col-md-6 col-sm-6">
+
+    <!-- ALERT -->
+    <!--
+    <div class="alert alert-mini alert-danger margin-bottom-30">
+        <strong>Oh snap!</strong> Login Incorrect!
+    </div>
+    -->
+    <!-- /ALERT -->
+    <!-- register form -->
+    <div class="msg"></div>
+    <form class="nomargin sky-form boxed">
+        <header>
+            <i class="fa fa-users"></i> Register
+        </header>
+        @{ var email = Model is null ? "" : $"value='{Model.Email}'";}
+        <fieldset class="nomargin">
+            <label class="input margin-bottom-10">
+                <i class="ico-append fa fa-envelope"></i>
+                <input type="text" id="email" placeholder="Email address" @email>
+                <b class="tooltip tooltip-bottom-right">Needed to verify your account</b>
+            </label>
+
+            <label class="input margin-bottom-10">
+                <i class="ico-append fa fa-lock"></i>
+                <input type="password" id="password" placeholder="Password">
+                <b class="tooltip tooltip-bottom-right">Only latin characters and numbers</b>
+            </label>
+
+            <label class="input margin-bottom-10">
+                <i class="ico-append fa fa-lock"></i>
+                <input type="password" id="rep_password" placeholder="Confirm password">
+                <b class="tooltip tooltip-bottom-right">Only latin characters and numbers</b>
+            </label>
+
+
+            <div class="row margin-bottom-10">
+                <div class="col-md-6">
+                    <label class="input">
+                        <input type="text" id="fname" placeholder="First name">
+                    </label>
+                </div>
+                <div class="col col-md-6">
+                    <label class="input">
+                        <input type="text" id="lname" placeholder="Last name">
+                    </label>
+                </div>
+            </div>
+
+            <label class="select margin-bottom-10 margin-top-20">
+                <select id="gender">
+                    <option value="0" selected="" disabled="">Gender</option>
+                    <option value="1">Male</option>
+                    <option value="2">Female</option>
+                    <option value="3">Other</option>
+                </select>
+                <i></i>
+            </label>
+
+            <label class="input margin-bottom-10">
+                <i class="ico-append fa fa-lock"></i>
+                <input type="text" id="dob" class="form-control datepicker" data-format="yyyy-mm-dd" data-lang="en" data-RTL="false">
+                <b class="tooltip tooltip-bottom-right">Date Of Birth</b>
+            </label>
+
+            <div class="margin-top-30">
+                <label class="checkbox nomargin"><input class="checked-agree" type="checkbox" name="checkbox"><i></i>I agree to the <a href="#" data-toggle="modal" data-target="#termsModal">Terms of Service</a></label>
+            </div>
+        </fieldset>
+
+        <div class="row margin-bottom-20">
+            <div class="col-md-12">
+                <button type="button" class="btn btn-primary reg"><i class="fa fa-check"></i> REGISTER</button>
+            </div>
+        </div>
+
+    </form>
+    <!-- /register form -->
+
+</div>
+<div class="col-md-6 col-sm-6">
+    <div action="#" method="post" class="sky-form boxed">
+
+        <header class="size-18 margin-bottom-20">
+            Welcome To Yeauplato
+        </header>
+
+        <fieldset class="nomargin">
+
+            <img class="img-responsive" src="~/assets/resources/yeauplato_logo.jpg" />
+
+        </fieldset>
+
+        <footer>
+            Already have an account? <a href="../account/"><strong>Back to login!</strong></a>
+        </footer>
+
+    </div>
+
+</div>
+
+<script>
+    $(document).ready(function () {
+        $('.reg').click(function () {
+            var eu_want_team = $('.checked-agree').is(':checked');
+            console.log(eu_want_team);
+
+            var uData = {};
+            uData.Email = $('#email').val();
+            uData.Fname = $('#fname').val();
+            uData.Lname = $('#lname').val();
+            uData.Password = $('#password').val();
+            uData.RepPassword = $('#rep_password').val();
+            uData.Dob = $('#dob').val();
+            uData.Gender = $('#gender').val();
+            uData.Check = eu_want_team;
+
+            console.log($('.checked-agree').val());
+             run_waitMe($('body'), 1, "win8");
+            $.ajax({
+                url: '@Url.Action("NewUser", "Account")',
+                contentType: "application/json; charset=utf-8",
+                data: "{user:" + JSON.stringify(uData) + "}",
+                dataType: "json",
+                method: "post",
+                success: function (result) {
+                    if (result.Check == true) {
+                        $('.msg').html(result.message);
+                    } else {
+                        $('.msg').html(result.message);
+                    }
+                    $('body').waitMe('hide');
+                },
+                error: function (r) {
+                    //alert(r.responseText);
+                    $('body').waitMe('hide');
+                }
+            });
+        });
+    });
+    function run_waitMe(el, num, effect) {
+        text = 'Please wait...';
+        fontSize = '';
+        switch (num) {
+            case 1:
+                maxSize = '';
+                textPos = 'vertical';
+                break;
+            case 2:
+                text = '';
+                maxSize = 30;
+                textPos = 'vertical';
+                break;
+            case 3:
+                maxSize = 30;
+                textPos = 'horizontal';
+                fontSize = '18px';
+                break;
+        }
+        console.log(effect)
+        el.waitMe({
+            effect: effect,
+            text: text,
+            bg: 'rgba(255,255,255,0.7)',
+            color: '#000',
+            maxSize: maxSize,
+            source: 'img.svg',
+            textPos: textPos,
+            fontSize: fontSize,
+            onClose: function () { }
+        });
+    }
+</script>

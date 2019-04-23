@@ -1,0 +1,94 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var post = (Social.Models.Article)ViewBag.Post;
+    if (post is null)
+    {
+        Response.Redirect("~/");
+    }
+}
+    <div class="col-md-8 col-sm-12">
+
+        @{
+
+            var context = new Social.Models.YeauplatoContext();
+            var title = !string.IsNullOrWhiteSpace(post.Heading) ? $"<h1 class='blog-post-title'>{post.Heading}</h1>" : "";
+
+            var comments = context.Comments.Where(cmt => cmt.ElementId == post.Id).ToList();
+            var author = context.Users.FirstOrDefault(u => u.Id == post.UserId);
+            var image = "";
+            var artImage = context.Images.FirstOrDefault(img => img.Id == context.ArticleImages.FirstOrDefault(art => art.ArticleId == post.Id).ImageId);
+            if (artImage != null)
+            {
+                image = $@"
+            <figure class='margin-bottom-20'>
+                <img class='img-responsive' src='..\{artImage.Url}' alt='img' />
+            </figure>";
+            }
+
+            @Html.Raw(title)
+            <ul class='blog-post-info list-inline'>
+                <li>
+                    <a href='#'>
+                        <i class='fa fa-clock-o'></i>
+                        <span class='font-lato'>@(Social.Helpers.Support.GetRelativetime(post.Time))</span>
+                    </a>
+                </li>
+                <li>
+                    <a href='#'>
+                        <i class='fa fa-comment-o'></i>
+                        <span class='font-lato'>@(comments != null ? comments.Count.ToString() : "0") Comment(s)</span>
+                    </a>
+                </li>
+                <!--<li>
+                <i class='fa fa-folder-open-o'></i>
+                <a class='category' href='#'>
+                    <span class='font-lato'>Design</span>
+                </a>
+                <a class='category' href='#'>
+                    <span class='font-lato'>Photography</span>
+                </a>
+            </li>-->
+                <li>
+                    <a href='#'>
+                        <i class='fa fa-user'></i>
+                        <span class='font-lato'>@author.FirstName @author.OtherNames</span>
+                    </a>
+                </li>
+            </ul>
+            @Html.Raw(image)
+            @post.Details
+        }
+
+        <div class="divider"><!-- divider --></div>
+        <!-- TAGS -->
+        <a class="tag" href="#">
+            <span class="txt"><i class="fa fa-icon-thumbs-up"></i>RESPONSIVE</span>
+            <span class="num">12</span>
+        </a>
+        <a class="tag" href="#">
+            <span class="txt"><i class="fa fa-icon-thumbs-down"></i>CSS</span>
+            <span class="num">3</span>
+        </a>
+        <a class="tag" href="#">
+            <span class="txt">HTML</span>
+            <span class="num">1</span>
+        </a>
+        <a class="tag" href="#">
+            <span class="txt">JAVASCRIPT</span>
+            <span class="num">28</span>
+        </a>
+        <a class="tag" href="#">
+            <span class="txt">DESIGN</span>
+            <span class="num">6</span>
+        </a>
+        <a class="tag" href="#">
+            <span class="txt">DEVELOPMENT</span>
+            <span class="num">3</span>
+        </a>
+        <!-- /TAGS -->
+        <div class="divider"><!-- divider --></div>
+
+        @{Html.RenderAction($"CommentPartial", "Home");}
+
+    </div>

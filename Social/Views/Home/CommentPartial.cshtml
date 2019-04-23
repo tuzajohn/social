@@ -1,0 +1,66 @@
+﻿@model List<Social.Models.Comment>
+
+<!-- COMMENTS -->
+<div id="comments" class="comments">
+
+    @{
+        if (Model != null)
+        {
+            foreach (var comment in Model)
+            {
+                var context = new Social.Models.YeauplatoContext();
+                var profimeImage = context.Images.
+                    FirstOrDefault(img => img.Id ==
+                        context.UserImages.
+                        FirstOrDefault(uimg => uimg.UserId == comment.UserId).ImageId
+                );
+                var author = context.Users.FirstOrDefault(u => u.Id == comment.UserId);
+                <!-- comment item -->
+                <div class="comment-item">
+
+                    <!-- user-avatar -->
+                    <span class="user-avatar">
+                        <img class="pull-left media-object" src="~/assets/images/avatar.png" width="64" height="64" alt="">
+                    </span>
+
+                    <div class="media-body">
+                        <a href="#commentForm" class="scrollTo comment-reply">reply</a>
+                        <h4 class="media-heading bold">@author.FirstName @author.OtherNames</h4>
+                        <small class="block">@Social.Helpers.Support.GetRelativetime(comment.Time)</small>
+                        @comment.Content
+                    </div>
+                </div>
+
+            }
+        }
+    }
+
+    @{ var url = Request.Url.AbsolutePath;}
+    <!-- Form -->
+    <form action="@Url.Action("SaveComment", "Home")@url.Substring(url.LastIndexOf('/'))" method="post">
+
+        <div class="row">
+            <div class="form-group">
+                <div class="col-md-12">
+                    <label>COMMENT</label>
+                    <textarea name="comment_data" class="summernote form-control" data-height="200" data-lang="fr-FR"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-md-12">
+
+                <button class="btn btn-3d btn-lg btn-reveal btn-primary">
+                    <i class="fa fa-check"></i>
+                    <span>SUBMIT MESSAGE</span>
+                </button>
+
+            </div>
+        </div>
+
+    </form>
+    <!-- /Form -->
+
+</div>
+<!-- /COMMENTS -->
